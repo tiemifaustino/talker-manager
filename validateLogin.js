@@ -1,14 +1,34 @@
 const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordMinLength = 6;
 
-const validadeLogin = (req, res, next) => {
-  const { email, password } = req.body;
-
-  const isValid = (regexEmail.test(email)) && (passwordMinLength >= password.length);
-  if (!isValid) {
-    return res.status(401).json({ message: 'Invalid credentials!' });
+const validadeEmail = (req, res, next) => {
+  const { email } = req.body;
+  const isValidEmail = regexEmail.test(email);
+ 
+  if (!email || email === '') {
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
+  if (!isValidEmail) {
+    return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+ 
   next();
 };
 
-module.exports = validadeLogin;
+const validatePassword = (req, res, next) => {
+  const { password } = req.body;
+
+  if (!password || password === '') {
+    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
+  }
+  if (password.length < passwordMinLength) {
+    return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  }
+
+  next();
+};
+
+module.exports = {
+  validadeEmail,
+  validatePassword,
+};
