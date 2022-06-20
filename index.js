@@ -4,7 +4,8 @@ const fs = require('fs').promises;
 
 const generateToken = require('./middleware/generateToken');
 const { validadeEmail, validatePassword } = require('./middleware/validateLogin');
-const validateToken = require('./middleware/validateTalker');
+const { validateToken, validateName,
+  validateAge, validateTalk } = require('./middleware/validateTalker');
 
 const app = express();
 app.use(bodyParser.json());
@@ -35,14 +36,23 @@ app.get('/talker/:id', async (req, res) => {
 });
 
 // Req 3 e Req 4
-app.post('/login', validadeEmail, validatePassword, (_req, res) => {
+app.post('/login', validadeEmail, validatePassword, (req, res) => {
   const token = generateToken();
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
 // Req 5
-app.post('/talker', validateToken, (req, res) => {
+app.post('/talker', validateToken, validateName, validateAge,
+validateTalk, async (req, res) => {
+  const { name, age, talk: { watchedAt, rate } } = req.body;
 
+  const talkers = await fs.readFile('./talker.json', 'utf-8');
+  const talkersParsed = JSON.parse(talkers);
+  talkersParsed.push({ name, age, talk: { watchedAt, rate } });
+
+  fs.writeFile('./talker.json', JSON.stringify(talkersParsed));
+
+   res.status(201).end();
 });
 
 app.listen(PORT, () => {
