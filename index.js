@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 
-const generateToken = require('./generateToken');
-const { validadeEmail, validatePassword } = require('./validateLogin');
+const generateToken = require('./middleware/generateToken');
+const { validadeEmail, validatePassword } = require('./middleware/validateLogin');
+const validateToken = require('./middleware/validateTalker');
 
 const app = express();
 app.use(bodyParser.json());
@@ -40,8 +41,8 @@ app.post('/login', validadeEmail, validatePassword, (_req, res) => {
 });
 
 // Req 5
-app.post('/talker', (_req, _res) => {
-  // const { }
+app.post('/talker', validateToken, (req, res) => {
+
 });
 
 app.listen(PORT, () => {
