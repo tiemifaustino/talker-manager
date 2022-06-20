@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 
 const generateToken = require('./middleware/generateToken');
-const { validadeEmail, validatePassword } = require('./middleware/validateLogin');
+const { validateEmail, validatePassword } = require('./middleware/validateLogin');
 const { validateToken, validateName,
   validateAge, validateTalk } = require('./middleware/validateTalker');
 
@@ -36,7 +36,7 @@ app.get('/talker/:id', async (req, res) => {
 });
 
 // Req 3 e Req 4
-app.post('/login', validadeEmail, validatePassword, (req, res) => {
+app.post('/login', validateEmail, validatePassword, (req, res) => {
   const token = generateToken();
   return res.status(HTTP_OK_STATUS).json({ token });
 });

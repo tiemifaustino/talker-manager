@@ -1,7 +1,7 @@
 const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const passwordMinLength = 6;
 
-const validadeEmail = (req, res, next) => {
+const validateEmail = (req, res, next) => {
   const { email } = req.body;
   const isValidEmail = regexEmail.test(email);
  
@@ -29,6 +29,6 @@ const validatePassword = (req, res, next) => {
 };
 
 module.exports = {
-  validadeEmail,
+  validateEmail,
   validatePassword,
 };
