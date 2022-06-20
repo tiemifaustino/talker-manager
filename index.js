@@ -39,6 +39,11 @@ app.post('/login', validadeEmail, validatePassword, (_req, res) => {
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
+// Req 5
+app.post('/talker', (_req, _res) => {
+  // const { }
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
