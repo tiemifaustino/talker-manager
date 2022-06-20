@@ -52,7 +52,7 @@ validateTalk, async (req, res) => {
 
   fs.writeFile('./talker.json', JSON.stringify(talkersParsed));
 
-   res.status(201).end();
+  res.status(201).send();
 });
 
 app.listen(PORT, () => {
