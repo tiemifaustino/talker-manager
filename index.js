@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs/promises');
 
+const talkerFile = './talker.json';
 const generateToken = require('./middlewares/generateToken');
 const { validateEmail, validatePassword } = require('./middlewares/validateLogin');
 const {
@@ -37,14 +38,14 @@ app.get('/', (_request, response) => {
 
 // Req 1
 app.get('/talker', async (_req, res) => {
-  const talkers = await fs.readFile('./talker.json', 'utf-8');
+  const talkers = await fs.readFile(talkerFile, 'utf-8');
   return res.status(HTTP_OK_STATUS).json(JSON.parse(talkers));
 });
 
 // Req 2
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
-  const talkers = await fs.readFile('./talker.json', 'utf-8');
+  const talkers = await fs.readFile(talkerFile, 'utf-8');
   const talkersParsed = JSON.parse(talkers);
   const speaker = talkersParsed.find((talker) => talker.id === Number(id));
 
@@ -58,11 +59,10 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
-// app.use(validateToken);
+app.use(validateToken);
 
 // Req 5
 app.post('/talker',
-  validateToken,
   validateName,
   validateAge,
   validateTalk,
@@ -71,20 +71,19 @@ app.post('/talker',
 async (req, res) => {
   const { name, age, talk } = req.body;
 
-  const contentFile = await fs.readFile('./talker.json');
+  const contentFile = await fs.readFile(talkerFile);
   const talkers = JSON.parse(contentFile);
   const id = talkers.length + 1;
 
   const newTalker = { id, name, age, talk };
   talkers.push(newTalker);
 
-  await fs.writeFile('./talker.json', JSON.stringify(talkers));
+  await fs.writeFile(talkerFile, JSON.stringify(talkers));
   res.status(201).json(newTalker);
 });
 
 // Req 6
 app.put('/talker/:id',
-  validateToken,
   validateName,
   validateAge,
   validateTalk,
@@ -94,15 +93,24 @@ async (req, res) => {
   const { id } = req.params;
   const { name, age, talk } = req.body;
 
-  const contentFile = await fs.readFile('./talker.json');
+  const contentFile = await fs.readFile(talkerFile);
   const talkers = JSON.parse(contentFile);
 
   const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
   talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk };
 
-  await fs.writeFile('./talker.json', JSON.stringify(talkers));
+  await fs.writeFile(talkerFile, JSON.stringify(talkers));
   res.status(HTTP_OK_STATUS).json(talkers[talkerIndex]);
 });
+
+// Req 7
+// app.delete('/talker/:id', async (req, res) => {
+  // const { id } = req.params;
+  // const contentFile = await fs.readFile('./talker.json');
+  // const talkers = JSON.parse(contentFile);
+
+  // const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
+// });
 
 app.listen(PORT, () => {
   console.log('Online');
