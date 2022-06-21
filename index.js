@@ -5,13 +5,13 @@ const fs = require('fs/promises');
 const generateToken = require('./middlewares/generateToken');
 const { validateEmail, validatePassword } = require('./middlewares/validateLogin');
 const {
-  validateToken,
   validateName,
   validateAge,
   validateTalk,
   validateWatchedAt,
   validateRate,
 } = require('./middlewares/validateTalker');
+const validateToken = require('./middlewares/validateToken');
 // const { readContentFile, writeContentFile, idGenerator } = require('./utilities');
 
 const app = express();
@@ -58,6 +58,8 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
+// app.use(validateToken);
+
 // Req 5
 app.post('/talker',
   validateToken,
@@ -75,10 +77,31 @@ async (req, res) => {
 
   const newTalker = { id, name, age, talk };
   talkers.push(newTalker);
-  console.log(newTalker);
 
   await fs.writeFile('./talker.json', JSON.stringify(talkers));
-   res.status(201).json(newTalker);
+  res.status(201).json(newTalker);
+});
+
+// Req 6
+app.put('/talker/:id',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+
+  const contentFile = await fs.readFile('./talker.json');
+  const talkers = JSON.parse(contentFile);
+
+  const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
+  talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk };
+
+  await fs.writeFile('./talker.json', JSON.stringify(talkers));
+  res.status(HTTP_OK_STATUS).json(talkers[talkerIndex]);
 });
 
 app.listen(PORT, () => {

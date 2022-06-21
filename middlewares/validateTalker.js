@@ -1,12 +1,3 @@
-const validateToken = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization) return res.status(401).json({ message: 'Token não encontrado' });
-
-  if (authorization.length !== 16) return res.status(401).json({ message: 'Token inválido' });
-
-  next();
-};
-
 const validateName = (req, res, next) => {
   const { name } = req.body;
   if (!name || name === '') {
@@ -21,7 +12,7 @@ const validateName = (req, res, next) => {
 
 const validateAge = (req, res, next) => {
   const { age } = req.body;
-  if (!age || age === '') {
+  if (!age || !Number.isInteger(age) || age === '') {
     return res.status(400).json({ message: 'O campo "age" é obrigatório' });
   }
   if (Number(age) < 18) {
@@ -55,17 +46,16 @@ const validateWatchedAt = (req, res, next) => {
 const validateRate = (req, res, next) => {
   const { talk: { rate } } = req.body;
 
-  if (!rate) {
-    return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
-  }
   if (Number(rate) < 1 || Number(rate) > 5) {
     return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  if (!rate || rate === '') {
+    return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
   }
   next();
 };
 
 module.exports = { 
-  validateToken,
   validateName,
   validateAge,
   validateTalk,
