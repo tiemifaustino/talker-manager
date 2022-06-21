@@ -7,11 +7,7 @@ const postToken = require('./middlewares/generateToken');
 const validateToken = require('./middlewares/validateToken');
 const { validateEmail, validatePassword } = require('./middlewares/validateLogin');
 const validateQuery = require('./middlewares/validateQuery');
-const {
-  readContentFile,
-  createTalker,
-  updateTalker,
-  deleteTalker } = require('./middlewares/utilities');
+const { createTalker, updateTalker, deleteTalker } = require('./middlewares/utilities');
 const {
   validateName,
   validateAge,
