@@ -59,6 +59,7 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
   return res.status(HTTP_OK_STATUS).json({ token });
 });
 
+// Middleware utilizado para Req 5, 6 e 7
 app.use(validateToken);
 
 // Req 5
@@ -104,13 +105,17 @@ async (req, res) => {
 });
 
 // Req 7
-// app.delete('/talker/:id', async (req, res) => {
-  // const { id } = req.params;
-  // const contentFile = await fs.readFile('./talker.json');
-  // const talkers = JSON.parse(contentFile);
+app.delete('/talker/:id', async (req, res) => {
+  const { id } = req.params;
+  const contentFile = await fs.readFile(talkerFile);
+  const talkers = JSON.parse(contentFile);
 
-  // const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
-// });
+  const talkerFiltered = talkers.filter((talker) => talker.id !== Number(id));
+
+  await fs.writeFile(talkerFile, JSON.stringify(talkerFiltered));
+
+  res.status(204).end();
+});
 
 app.listen(PORT, () => {
   console.log('Online');
