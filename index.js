@@ -4,8 +4,14 @@ const fs = require('fs/promises');
 
 const generateToken = require('./middlewares/generateToken');
 const { validateEmail, validatePassword } = require('./middlewares/validateLogin');
-const { validateToken, validateName,
-  validateAge, validateTalk } = require('./middlewares/validateTalker');
+const {
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+} = require('./middlewares/validateTalker');
 // const { readContentFile, writeContentFile, idGenerator } = require('./utilities');
 
 const app = express();
@@ -18,6 +24,16 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
+
+// app.use((req, _res, next) => {
+//   console.log('req.method:', req.method);
+//   console.log('req.path:', req.path);
+//   console.log('req.params:', req.params);
+//   console.log('req.query:', req.query);
+//   console.log('req.headers:', req.headers);
+//   console.log('req.body:', req.body);
+//   next();
+// });
 
 // Req 1
 app.get('/talker', async (_req, res) => {
@@ -33,7 +49,7 @@ app.get('/talker/:id', async (req, res) => {
   const speaker = talkersParsed.find((talker) => talker.id === Number(id));
 
   if (!speaker) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-  res.status(HTTP_OK_STATUS).json(speaker);
+  return res.status(HTTP_OK_STATUS).json(speaker);
 });
 
 // Req 3 e Req 4
@@ -43,7 +59,14 @@ app.post('/login', validateEmail, validatePassword, (req, res) => {
 });
 
 // Req 5
-app.post('/talker', validateToken, validateName, validateAge, validateTalk, async (req, res) => {
+app.post('/talker',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+async (req, res) => {
   const { name, age, talk } = req.body;
 
   const contentFile = await fs.readFile('./talker.json');
@@ -52,10 +75,10 @@ app.post('/talker', validateToken, validateName, validateAge, validateTalk, asyn
 
   const newTalker = { id, name, age, talk };
   talkers.push(newTalker);
+  console.log(newTalker);
 
-  fs.writeFile('./talker.json', JSON.stringify(talkers));
-
-  res.status(201).json(newTalker);
+  await fs.writeFile('./talker.json', JSON.stringify(talkers));
+   res.status(201).json(newTalker);
 });
 
 app.listen(PORT, () => {
