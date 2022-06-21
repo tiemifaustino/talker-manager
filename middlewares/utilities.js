@@ -5,18 +5,18 @@ const readContentFile = async () => JSON.parse(await fs.readFile('talker.json', 
 const writeContentFile = async (data) => {
   const talkers = await readContentFile();
   talkers.push(data);
-
-  const talkersToStr = JSON.stringify(talkers);
-  await fs.writeFile('talker.json', talkersToStr);
+  await fs.writeFile('talker.json', JSON.stringify(talkers));
 };
 
-const idGenerator = async () => {
+const validateQuery = async (req, res, next) => {
+  const { q } = req.query;
   const talkers = await readContentFile();
-  return talkers.length + 1;
+  if (!q || q === '') return res.status(200).json(JSON.parse(talkers));
+  next();
 };
 
 module.exports = {
   readContentFile,
   writeContentFile,
-  idGenerator,
+  validateQuery,
 };
