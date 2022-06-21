@@ -8,6 +8,14 @@ const writeContentFile = async (data) => {
   await fs.writeFile('talker.json', JSON.stringify(talkers));
 };
 
+const deleteContentFile = async (req, res) => {
+  const { id } = req.params;
+  const talkers = await readContentFile();
+  const filteredTalkers = talkers.filter((talker) => talker.id !== Number(id));
+  await fs.writeFile('talker.json', JSON.stringify(filteredTalkers));
+  res.status(204).end();
+};
+
 const validateQuery = async (req, res, next) => {
   const { q } = req.query;
   const talkers = await readContentFile();
@@ -19,4 +27,5 @@ module.exports = {
   readContentFile,
   writeContentFile,
   validateQuery,
+  deleteContentFile,
 };

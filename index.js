@@ -1,19 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs/promises');
-
-const talkerFile = './talker.json';
 const generateToken = require('./middlewares/generateToken');
+const validateToken = require('./middlewares/validateToken');
 const { validateEmail, validatePassword } = require('./middlewares/validateLogin');
+const {
+  readContentFile,
+  writeContentFile,
+  deleteContentFile,
+  validateQuery } = require('./middlewares/utilities');
 const {
   validateName,
   validateAge,
   validateTalk,
   validateWatchedAt,
-  validateRate,
-} = require('./middlewares/validateTalker');
-const validateToken = require('./middlewares/validateToken');
-const { readContentFile, validateQuery } = require('./middlewares/utilities');
+  validateRate } = require('./middlewares/validateTalker');
 
 const app = express();
 app.use(bodyParser.json());
@@ -28,36 +28,35 @@ app.get('/', (_request, response) => {
 
 // Req 1
 app.get('/talker', async (_req, res) => {
-  const talkers = await fs.readFile(talkerFile, 'utf-8');
-  return res.status(HTTP_OK_STATUS).json(JSON.parse(talkers));
+  const talkers = await readContentFile();
+  res.status(HTTP_OK_STATUS).json(talkers);
 });
 
 // Req 8
 app.get('/talker/search', validateToken, validateQuery, async (req, res) => {
   const { q } = req.query;
   const talkers = await readContentFile();
-  const filteredTalker = talkers.filter((talker) => talker.name.includes(q));
-  
-  if (!filteredTalker) return res.status(HTTP_OK_STATUS).json([]);
+  const filteredTalkers = talkers.filter((talker) => talker.name.includes(q));
 
-  res.status(HTTP_OK_STATUS).json(filteredTalker);
+  if (!filteredTalkers) return res.status(HTTP_OK_STATUS).json([]);
+
+  res.status(HTTP_OK_STATUS).json(filteredTalkers);
 });
 
 // Req 2
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
-  const talkers = await fs.readFile(talkerFile, 'utf-8');
-  const talkersParsed = JSON.parse(talkers);
-  const speaker = talkersParsed.find((talker) => talker.id === Number(id));
+  const talkers = await readContentFile();
+  const speaker = talkers.find((talker) => talker.id === Number(id));
 
   if (!speaker) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-  return res.status(HTTP_OK_STATUS).json(speaker);
+  res.status(HTTP_OK_STATUS).json(speaker);
 });
 
 // Req 3 e Req 4
 app.post('/login', validateEmail, validatePassword, (req, res) => {
   const token = generateToken();
-  return res.status(HTTP_OK_STATUS).json({ token });
+  res.status(HTTP_OK_STATUS).json({ token });
 });
 
 // Middleware utilizado para Req 5, 6 e 7 
@@ -72,15 +71,12 @@ app.post('/talker',
   validateRate,
 async (req, res) => {
   const { name, age, talk } = req.body;
-
-  const contentFile = await fs.readFile(talkerFile);
-  const talkers = JSON.parse(contentFile);
+  const talkers = await readContentFile();
   const id = talkers.length + 1;
-
   const newTalker = { id, name, age, talk };
   talkers.push(newTalker);
+  await writeContentFile(newTalker);
 
-  await fs.writeFile(talkerFile, JSON.stringify(talkers));
   res.status(201).json(newTalker);
 });
 
@@ -94,30 +90,16 @@ app.put('/talker/:id',
 async (req, res) => {
   const { id } = req.params;
   const { name, age, talk } = req.body;
-
-  const contentFile = await fs.readFile(talkerFile);
-  const talkers = JSON.parse(contentFile);
+  const talkers = await readContentFile();
 
   const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
   talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk };
+  await writeContentFile(talkers[talkerIndex]);
 
-  await fs.writeFile(talkerFile, JSON.stringify(talkers));
   res.status(HTTP_OK_STATUS).json(talkers[talkerIndex]);
 });
 
 // Req 7
-app.delete('/talker/:id', async (req, res) => {
-  const { id } = req.params;
-  const contentFile = await fs.readFile(talkerFile);
-  const talkers = JSON.parse(contentFile);
+app.delete('/talker/:id', deleteContentFile);
 
-  const filteredTalkers = talkers.filter((talker) => talker.id !== Number(id));
-
-  await fs.writeFile(talkerFile, JSON.stringify(filteredTalkers));
-
-  res.status(204).end();
-});
-
-app.listen(PORT, () => {
-  console.log('Online');
-});
+app.listen(PORT, () => console.log('Online'));
