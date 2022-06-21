@@ -8,7 +8,30 @@ const writeContentFile = async (data) => {
   await fs.writeFile('talker.json', JSON.stringify(talkers));
 };
 
-const deleteContentFile = async (req, res) => {
+const createTalker = async (req, res) => {
+  const { name, age, talk } = req.body;
+  const talkers = await readContentFile();
+  const id = talkers.length + 1;
+  const newTalker = { id, name, age, talk };
+  talkers.push(newTalker);
+  await writeContentFile(newTalker);
+
+  res.status(201).json(newTalker);
+};
+
+const updateTalker = async (req, res) => {
+  const { id } = req.params;
+  const { name, age, talk } = req.body;
+  const talkers = await readContentFile();
+
+  const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
+  talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk };
+  await writeContentFile(talkers[talkerIndex]);
+
+  res.status(200).json(talkers[talkerIndex]);
+};
+
+const deleteTalker = async (req, res) => {
   const { id } = req.params;
   const talkers = await readContentFile();
   const filteredTalkers = talkers.filter((talker) => talker.id !== Number(id));
@@ -16,16 +39,10 @@ const deleteContentFile = async (req, res) => {
   res.status(204).end();
 };
 
-const validateQuery = async (req, res, next) => {
-  const { q } = req.query;
-  const talkers = await readContentFile();
-  if (!q || q === '') return res.status(200).json(talkers);
-  next();
-};
-
 module.exports = {
   readContentFile,
   writeContentFile,
-  validateQuery,
-  deleteContentFile,
+  createTalker,
+  updateTalker,
+  deleteTalker,
 };

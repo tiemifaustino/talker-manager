@@ -1,13 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const generateToken = require('./middlewares/generateToken');
+const getTalker = require('./middlewares/getTalker');
+const getAllTalkers = require('./middlewares/getAllTalkers');
+const findTalkerName = require('./middlewares/findTalkerName');
+const postToken = require('./middlewares/generateToken');
 const validateToken = require('./middlewares/validateToken');
 const { validateEmail, validatePassword } = require('./middlewares/validateLogin');
+const validateQuery = require('./middlewares/validateQuery');
 const {
   readContentFile,
-  writeContentFile,
-  deleteContentFile,
-  validateQuery } = require('./middlewares/utilities');
+  createTalker,
+  updateTalker,
+  deleteTalker } = require('./middlewares/utilities');
 const {
   validateName,
   validateAge,
@@ -27,37 +31,16 @@ app.get('/', (_request, response) => {
 });
 
 // Req 1
-app.get('/talker', async (_req, res) => {
-  const talkers = await readContentFile();
-  res.status(HTTP_OK_STATUS).json(talkers);
-});
+app.get('/talker', getAllTalkers);
 
 // Req 8
-app.get('/talker/search', validateToken, validateQuery, async (req, res) => {
-  const { q } = req.query;
-  const talkers = await readContentFile();
-  const filteredTalkers = talkers.filter((talker) => talker.name.includes(q));
-
-  if (!filteredTalkers) return res.status(HTTP_OK_STATUS).json([]);
-
-  res.status(HTTP_OK_STATUS).json(filteredTalkers);
-});
+app.get('/talker/search', validateToken, validateQuery, findTalkerName);
 
 // Req 2
-app.get('/talker/:id', async (req, res) => {
-  const { id } = req.params;
-  const talkers = await readContentFile();
-  const speaker = talkers.find((talker) => talker.id === Number(id));
-
-  if (!speaker) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-  res.status(HTTP_OK_STATUS).json(speaker);
-});
+app.get('/talker/:id', getTalker);
 
 // Req 3 e Req 4
-app.post('/login', validateEmail, validatePassword, (req, res) => {
-  const token = generateToken();
-  res.status(HTTP_OK_STATUS).json({ token });
-});
+app.post('/login', validateEmail, validatePassword, postToken);
 
 // Middleware utilizado para Req 5, 6 e 7 
 app.use(validateToken);
@@ -69,16 +52,7 @@ app.post('/talker',
   validateTalk,
   validateWatchedAt,
   validateRate,
-async (req, res) => {
-  const { name, age, talk } = req.body;
-  const talkers = await readContentFile();
-  const id = talkers.length + 1;
-  const newTalker = { id, name, age, talk };
-  talkers.push(newTalker);
-  await writeContentFile(newTalker);
-
-  res.status(201).json(newTalker);
-});
+  createTalker);
 
 // Req 6
 app.put('/talker/:id',
@@ -87,19 +61,9 @@ app.put('/talker/:id',
   validateTalk,
   validateWatchedAt,
   validateRate,
-async (req, res) => {
-  const { id } = req.params;
-  const { name, age, talk } = req.body;
-  const talkers = await readContentFile();
-
-  const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
-  talkers[talkerIndex] = { ...talkers[talkerIndex], name, age, talk };
-  await writeContentFile(talkers[talkerIndex]);
-
-  res.status(HTTP_OK_STATUS).json(talkers[talkerIndex]);
-});
+  updateTalker);
 
 // Req 7
-app.delete('/talker/:id', deleteContentFile);
+app.delete('/talker/:id', deleteTalker);
 
 app.listen(PORT, () => console.log('Online'));
