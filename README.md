@@ -50,18 +50,19 @@ Foi desenvolvido alguns endpoints que leem e escrevem em um arquivo utilizando o
 ## Instalando Dependências
 
 1. Clone o repositório
-* `git clone git@github.com:tiemifaustino/talker-manager.git`
-* Entre na pasta do repositório que você acabou de clonar:
-  * `cd talker-manager`
+  * `git clone git@github.com:tiemifaustino/talker-manager.git`
+  * Entre na pasta do repositório que você acabou de clonar:
+    * `cd talker-manager`
 
 2. Instale as dependências:
   * `npm install`
 
 3. Executar o comando para iniciar o servidor em modo de desenvolvimento
- * `npm run dev`
+  * `npm run dev`
+ 
  *Este comando fará com que o servidor reinicie de forma automática ao salvar uma modificação realizada nos arquivos do projeto.*
 
 4. Caso utilize a extensão Thunder Client do VS Code, os endpoints estão salvos no diretório `thunder-tests`
 
 5. Para restaurar o arquivo `talker.json` para o estado inicial execute:
- * `npm run restore`
+  * `npm run restore`
