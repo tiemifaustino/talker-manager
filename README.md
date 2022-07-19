@@ -15,11 +15,9 @@ Foi desenvolvido alguns endpoints que leem e escrevem em um arquivo utilizando o
 
 ## 👩‍💻 Tecnologias Utilizadas
 
-- Node.js <img align="center" alt="Tiemi-Node.js" height="30" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" />
+- Node.js <img align="center" alt="Tiemi-Node.js" height="40" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" />
           
-- Express <img align="center" alt="Tiemi-Express" height="30" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original-wordmark.svg" />
-          
-- MySQL <img align="center" alt="Tiemi-MySQL" height="30" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" />
+- Express <img align="center" alt="Tiemi-Express" height="50" width="50" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original-wordmark.svg" />
 
 - Nodemon
 
