@@ -1,5 +1,4 @@
 const express = require('express');
-const rescue = require('express-rescue');
 const bodyParser = require('body-parser');
 const getTalker = require('./middlewares/getTalker');
 const getAllTalkers = require('./middlewares/getAllTalkers');
@@ -28,39 +27,39 @@ app.get('/', (_request, response) => {
 });
 
 // Req 1
-app.get('/talker', rescue(getAllTalkers));
+app.get('/talker', getAllTalkers);
 
 // Req 8
-app.get('/talker/search', rescue(validateToken), rescue(validateQuery), rescue(findTalkerName));
+app.get('/talker/search', validateToken, validateQuery, findTalkerName);
 
 // Req 2
-app.get('/talker/:id', rescue(getTalker));
+app.get('/talker/:id', getTalker);
 
 // Req 3 e Req 4
-app.post('/login', rescue(validateEmail), rescue(validatePassword), rescue(postToken));
+app.post('/login', validateEmail, validatePassword, postToken);
 
 // Middleware utilizado para Req 5, 6 e 7 
 app.use(validateToken);
 
 // Req 5
 app.post('/talker',
-  rescue(validateName),
-  rescue(validateAge),
-  rescue(validateTalk),
-  rescue(validateWatchedAt),
-  rescue(validateRate),
-  rescue(createTalker));
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+  createTalker);
 
 // Req 6
 app.put('/talker/:id',
-  rescue(validateName),
-  rescue(validateAge),
-  rescue(validateTalk),
-  rescue(validateWatchedAt),
-  rescue(validateRate),
-  rescue(updateTalker));
+  validateName,
+  validateAge,
+  validateTalk,
+  validateWatchedAt,
+  validateRate,
+  updateTalker);
 
 // Req 7
-app.delete('/talker/:id', rescue(deleteTalker));
+app.delete('/talker/:id', deleteTalker);
 
 app.listen(PORT, () => console.log('Online'));
