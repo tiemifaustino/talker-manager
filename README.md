@@ -15,9 +15,9 @@ Foi desenvolvido alguns endpoints que leem e escrevem em um arquivo utilizando o
 
 ## 👩‍💻 Tecnologias Utilizadas
 
-- Node.js <img align="center" alt="Tiemi-Node.js" height="40" width="40" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" />
-          
-- Express <img align="center" alt="Tiemi-Express" height="50" width="50" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original-wordmark.svg" />
+- ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
+
+- ![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 
 - Nodemon
 
