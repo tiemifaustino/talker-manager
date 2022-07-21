@@ -16,12 +16,9 @@ Foi desenvolvido alguns endpoints que leem e escrevem em um arquivo utilizando o
 ## 👩‍💻 Tecnologias Utilizadas
 
 - ![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)
-
 - ![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
-
-- Nodemon
-
-- Thunder Client
+- [Nodemon](https://www.npmjs.com/package/nodemon)
+- [Thunder Client](https://www.thunderclient.com/)
 
 
 ## 🛠️ Habilidades Utilizadas
