@@ -66,7 +66,7 @@ npm run dev
  
  *Este comando fará com que o servidor reinicie de forma automática ao salvar uma modificação realizada nos arquivos do projeto.*
 
-### 4. Caso utilize a extensão Thunder Client do VS Code:
+### 4. Caso utilize a extensão [Thunder Client](https://www.thunderclient.com/) do VS Code:
 * os endpoints estão salvos no diretório `thunder-tests`
 
 ### 5. Para restaurar o arquivo `talker.json` para o estado inicial execute:
